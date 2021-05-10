@@ -16,20 +16,27 @@ app.use(bodyParser.json());
 // // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const path = __dirname + '/app/views/';
+
+app.use(express.static(path));
+
 const db = require("./app/models");
 const Role = db.role;
 
-//db.sequelize.sync();
+db.sequelize.sync();
 // drop the table if it already exists
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db.");
-  initial();
-});
+//db.sequelize.sync({ force: true }).then(() => {
+//  console.log("Drop and re-sync db.");
+//  initial();
+//});
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to New TeamInfo backend" });
+app.get(['/','/addorg','/adduser','/login','/logout','/orgs','/profile','/register','/users'], function (req,res) {
+  res.sendFile(path + "index.html");
 });
+// simple route
+//app.get("/", (req, res) => {
+  //res.json({ message: "Welcome to New TeamInfo backend" });
+//});
 
 require("./app/routes/user.routes")(app);
 require("./app/routes/org.routes")(app);

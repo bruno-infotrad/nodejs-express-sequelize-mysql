@@ -80,10 +80,33 @@ isModeratorOrAdmin = (req, res, next) => {
   });
 };
 
+isOwnerOrAdmin = (req, res, next) => {
+  AppUser.findByPk(req.userId).then(appuser => {
+    console.log('appuser.username ='+appuser.username);
+    console.log('req.body.username ='+req.body.username);
+    appuser.getRoles().then(roles => {
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i].name === "admin") {
+          next();
+          return;
+        }
+      }
+    if (appuser.username === req.body.username) {
+      next();
+      return;
+    }
+    res.status(403).send({
+      message: "Not the owner or admin!"
+    });
+    });
+  });
+};
+
 const authJwt = {
   verifyToken: verifyToken,
   isAdmin: isAdmin,
   isModerator: isModerator,
-  isModeratorOrAdmin: isModeratorOrAdmin
+  isModeratorOrAdmin: isModeratorOrAdmin,
+  isOwnerOrAdmin: isOwnerOrAdmin
 };
 module.exports = authJwt;
