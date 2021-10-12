@@ -18,8 +18,8 @@ module.exports = (sequelize, Sequelize) => {
     organization: {
       type: Sequelize.INTEGER
     },
-    published: {
-      type: Sequelize.BOOLEAN
+    image: {
+      type: Sequelize.STRING.BINARY
     }
   });
 

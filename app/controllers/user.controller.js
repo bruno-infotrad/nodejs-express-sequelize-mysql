@@ -1,6 +1,8 @@
 const db = require("../models");
 const User = db.users;
 const Op = db.Sequelize.Op;
+var multer  = require('multer')
+var upload = multer()
 
 // Create and Save a new User
 exports.create = (req, res) => {
@@ -20,7 +22,7 @@ exports.create = (req, res) => {
     title: req.body.title,
     description: req.body.description,
     organization: req.body.organization,
-    published: req.body.published ? req.body.published : false
+    image: req.file
   };
 
   // Save User in the database
@@ -71,8 +73,46 @@ exports.findOne = (req, res) => {
 // Update a User by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
+  //console.log("User.update id="+id);
+  //console.log("req="+req.params.thumbnail);
 
   User.update(req.body, {
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "User was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating User with id=" + id
+      });
+    });
+};
+
+// Upload image associated to a user identified by the id in the request
+exports.upload = (req,res,next) => {
+  //console.log("REQUEST");
+  //console.log(req);
+  console.log("REQUEST BODY");
+  console.log(req.body);
+  const id = req.body.id;
+  console.log("User.update id="+id);
+  //console.log("req id="+req.body.id);
+  console.log("THUMBNAIL");
+  console.log(req.file);
+  //console.log("req thumbnail="+JSON.stringify(req.body));
+  let buff = new Buffer(req.file.buffer);
+  let base64data = buff.toString('base64');
+  User.update({"image": base64data}, {
+  //User.update({"image": btoa(req.file.buffer)}, {
     where: { id: id }
   })
     .then(num => {
@@ -131,20 +171,6 @@ exports.deleteAll = (req, res) => {
       res.status(500).send({
         message:
           err.message || "Some error occurred while removing all users."
-      });
-    });
-};
-
-// find all published User
-exports.findAllPublished = (req, res) => {
-  User.findAll({ where: { published: true } })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving users."
       });
     });
 };

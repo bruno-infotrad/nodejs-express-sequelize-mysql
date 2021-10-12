@@ -1,6 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+var multer = require('multer');
+//const fileUpload = require('express-fileupload');
+
 
 const app = express();
 
@@ -12,9 +15,11 @@ app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
-//
 // // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
+// File upload functionality
+app.use(multer().single("thumbnail"));
+//app.use(fileUpload());
 
 const path = __dirname + '/app/views/';
 
