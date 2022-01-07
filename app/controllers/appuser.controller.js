@@ -1,5 +1,5 @@
 exports.allAccess = (req, res) => {
-  res.status(200).send("Public Content.");
+  res.status(200).send("Welcome to New TeamInfo <br><a href='/login'>Log in</a> to search and view users profiles.");
 };
 
 exports.userBoard = (req, res) => {
