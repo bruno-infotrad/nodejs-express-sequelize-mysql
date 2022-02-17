@@ -1,5 +1,6 @@
 const db = require("../models");
 const Org = db.orgs;
+const User = db.users;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Org
@@ -98,6 +99,14 @@ exports.delete = (req, res) => {
   })
     .then(num => {
       if (num == 1) {
+        User.update( { organization: '' }, {
+          where: { organization: id }
+        });
+        /*.catch(err => {
+          res.status(500).send({
+            message: "Error removing organization reference in users table"
+          });
+        });*/
         res.send({
           message: "Org was deleted successfully!"
         });
